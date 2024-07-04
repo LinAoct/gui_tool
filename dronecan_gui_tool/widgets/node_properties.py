@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import QDialog, QGridLayout, QLabel, QLineEdit, QGroupBox, 
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPalette
 from logging import getLogger
+import pathlib
 from . import get_monospace_font, make_icon_button, BasicTable, show_error, request_confirmation
 from .node_monitor import node_health_to_color, node_mode_to_color
 from .file_server import FileServer_PathKey
@@ -249,7 +250,10 @@ class Controls(QGroupBox):
         if not fw_file[0]:
             self.window().show_message('Cancelled')
             return
-        fw_file = os.path.normcase(os.path.abspath(fw_file[0]))
+        if os.name == 'nt':
+            fw_file = pathlib.Path(fw_file[0]).resolve()
+        else:
+            fw_file = os.path.normcase(os.path.abspath(fw_file[0]))
 
         # Making sure the file is readable by the process
         try:
